@@ -6,7 +6,7 @@ const initInputs= { username: "", password: "" }
 
 export default function Auth(){
     const [inputs, setInputs] = useState(initInputs)
-    const [toggle, setToggle] = useState(false)
+    const [toogle, setToggle] = useState(false)
 
     const { signup, login, errMsg, resetAuthErr } = useContext(UserContext)
 
@@ -51,7 +51,7 @@ export default function Auth(){
                 <>
                     <AuthForm
                         handleChange={handleChange}
-                        handleSubmit={handleSignup}
+                        handleSubmit={handleLogin}
                         inputs={inputs}
                         btnText="Login"
                         errMsg={errMsg}
