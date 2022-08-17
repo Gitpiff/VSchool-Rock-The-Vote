@@ -41,6 +41,84 @@ export default function UserProvider(props){
 
     //Login function, also takes the credentials as arguments
     function login(credentials){
-        axios
+        axios.post("/auth/login", credentials)
+            .then(res => {
+                const { user, token } = res.data
+                localStorage.setItem("token", token)
+                localStorage.setItem("user", JSON.stringify(user))
+                getUserPosts() //gets the user posts immediately after login
+                setUserState(prevUserState => ({
+                    ...prevUserState,
+                    user,
+                    token
+                }))
+            })
+            .catch(err => handleAuthErr(err.response.data.errMsg))
     }
+
+    //Logout function -it does not need any arguments-, simply removes the user and token from local storage, and resets the user state to an empty collection
+    function logout(){
+        localStorage.removeItem("token")
+        localStorage.removeItem("user")
+        setUserState({
+            user: {},
+            token: "",
+            issues: []
+        })
+    }
+
+    //Displays the error message in the page -takes in the errMSg as an argument-
+    function handleAuthErr(errMsg){
+        setUserState(prevState => ({
+            ...prevState,
+            errMsg
+        }))
+    }
+
+    //Once the error message appears, it should only be displayed until the next refresh of the page
+    function resetAuthErr(){
+        setUserState(prevState => ({
+            ...prevState,
+            errMsg: ""
+        }))
+    }
+
+    //Get User Posts
+    function getUserPosts(){
+        userAxios.get("/api/issue/user")
+            .then(res => {
+                setUserState(prevState => ({
+                    ...prevState,
+                    issues: res.data
+                }))
+            })
+            .catch(err => console.log(err.response.data.errMsg))
+    }
+
+    //Add Issue
+    function addIssue(newIssue){
+        userAxios.post("/api/issue", newIssue)
+            .then(res => {
+                setUserState(prevState => ({
+                    ...prevState,
+                    issues: [res.data]
+                }))
+            })
+            .catch(err => console.log(err.response.data.errMsg))
+    }
+
+    return(
+        <UserContext.Provider
+            value={{
+                ...userState,
+                signUp,
+                login,
+                logout,
+                addIssue,
+                resetAuthErr
+            }}
+        >
+            {props.children}
+        </UserContext.Provider>
+    )
 }
