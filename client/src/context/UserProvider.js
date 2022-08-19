@@ -14,7 +14,7 @@ userAxios.interceptors.request.use(config => {
 export default function UserProvider(props){
     const initState = {
         //before setting the user to an empty object, let's check if the user already exists in the local storage, since we stringify it before we need to parse it back to an object, if it's not found in local storage, then we can set it as an empty object
-        user: JSON.parse(localStorage.getItem("user") || {}),
+        user: JSON.parse(localStorage.getItem("user")) || {},
         //before setting the token to an empty string, let's check if the token already exists in the local storage, otherwise set it as an empty string
         token: localStorage.getItem("token") || "",
         issues: [],
